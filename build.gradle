@@ -1,0 +1,120 @@
+buildscript {
+    ext {
+        springBootVersion = '2.2.6.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.9.RELEASE"
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    group = 'com.github.prorhap.coupon.simple'
+    version = '1.0.0-SNAPSHOT'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+
+    repositories {
+        mavenCentral()
+    }
+
+    configurations {
+        all*.exclude group: 'commons-logging', module: 'commons-logging' // replaced with jcl-over-slf4j
+        all*.exclude group: 'log4j', module: 'log4j' // replaced with log4j-over-slf4j
+
+        all*.exclude module: 'hsqldb'
+        all*.exclude module: 'slf4j-log4j12'
+
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    configurations {
+
+    }
+
+    task initSourceFolders {
+        sourceSets*.java.srcDirs*.each {
+            if( !it.exists() ) {
+                it.mkdirs()
+            }
+        }
+        sourceSets*.resources.srcDirs*.each {
+            if( !it.exists() ) {
+                it.mkdirs()
+
+            }
+        }
+    }
+
+    dependencies {
+        compile 'javax.inject:javax.inject:1'
+        compile group: 'com.google.guava', name: 'guava', version: '23.0'
+        runtime("com.h2database:h2:1.3.176")
+        compileOnly 'org.projectlombok:lombok'
+        testCompile group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
+        testCompile group: 'org.exparity', name: 'hamcrest-date', version: '2.0.7'
+        annotationProcessor 'org.projectlombok:lombok'
+    }
+}
+
+
+project('coupon-api') {
+    bootJar{
+        mainClassName = 'com.github.prorhap.coupon.simple.CouponApplication'
+        enabled = true;
+    }
+
+    dependencies {
+//        compile project(':coupon-service')
+
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation project(':coupon-service')
+
+        compile('org.springframework.boot:spring-boot-starter-web')
+        compile('org.springframework.boot:spring-boot-starter-tomcat')
+        compile('org.springframework.boot:spring-boot-devtools')
+        compile('org.springframework.boot:spring-boot-starter-actuator')
+        compile('com.google.code.gson:gson:2.8.1')
+        compile('org.apache.commons:commons-lang3:3.6')
+
+        compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.0")
+
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+        testCompile('junit:junit:4.12')
+    }
+}
+
+project('coupon-service') {
+    dependencies {
+
+        compile('org.springframework.boot:spring-boot-starter-web')
+        compile('org.springframework.boot:spring-boot-starter-data-jpa')
+        compile('org.springframework.boot:spring-boot-starter-validation')
+        compile("org.modelmapper:modelmapper:2.3.0")
+
+        compile('com.google.code.gson:gson:2.8.1')
+        compile('com.h2database:h2')
+        compile('org.apache.commons:commons-lang3:3.6')
+
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+        testCompile('junit:junit:4.12')
+    }
+
+    bootJar {
+        enabled = false
+    }
+
+    jar {
+        enabled = true
+    }
+}
