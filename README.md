@@ -16,3 +16,4 @@
 ```bash
 ./gradlew clean bootRun
 ```
+* H2 Console: http://localhost:8080/h2 
