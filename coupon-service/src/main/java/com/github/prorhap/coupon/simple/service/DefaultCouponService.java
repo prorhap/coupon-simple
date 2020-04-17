@@ -69,7 +69,6 @@ public class DefaultCouponService implements CouponService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<CouponResponse> getTodayExpiredCoupons() {
         try {
             return couponRepository
