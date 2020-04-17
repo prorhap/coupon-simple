@@ -65,8 +65,6 @@ public class GlobalControllerExceptionHandler {
 
     public static class ErrorMessage {
 
-        private static final String IS_DEBUG_PARAMETER_NAME = "debug";
-        private static final String EMPTY_STRING = "";
         private String code;
         private String error;
         private String message;
