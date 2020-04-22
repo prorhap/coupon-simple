@@ -2,20 +2,23 @@ package com.github.prorhap.coupon.simple.model;
 
 import com.github.prorhap.coupon.simple.common.entity.BaseEntity;
 import com.github.prorhap.coupon.simple.dto.CouponUseResult;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "couponType")
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor
 public class Coupon extends BaseEntity {
 
@@ -26,7 +29,7 @@ public class Coupon extends BaseEntity {
     @GeneratedValue
     private Long id;
 
-    @Column(unique=true)
+    @Column(unique = true)
     private String couponCode;
 
     private boolean used;
@@ -82,19 +85,29 @@ public class Coupon extends BaseEntity {
 
     public CouponIssueResult issue(User user, Date now) {
 
-        if(isUsed()) {
+        if (isUsed()) {
             return CouponIssueResult.ALREADY_USED;
-        }else if(isIssued()) {
+        } else if (isIssued()) {
             return CouponIssueResult.ALREADY_ISSUED;
-        }else if(!now.before(expireAt)) {
+        } else if (!now.before(expireAt)) {
             return CouponIssueResult.ALREADY_EXPIRED;
         }
 
-        this.user = user;
+        setUser(user);
         this.issuedAt = now;
         this.issued = true;
 
         return CouponIssueResult.ISSUED;
+    }
+
+    private void setUser(User user) {
+        this.user = user;
+
+        List<Coupon> coupons = user.getCoupons();
+        if (coupons.contains(this)) {
+            coupons.remove(this);
+        }
+        coupons.add(this);
     }
 
     public void cancel() {

@@ -1,6 +1,7 @@
 package com.github.prorhap.coupon.simple.model;
 
 import com.github.prorhap.coupon.simple.common.entity.BaseEntity;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 @NoArgsConstructor
 public class User extends BaseEntity {
     @Transient

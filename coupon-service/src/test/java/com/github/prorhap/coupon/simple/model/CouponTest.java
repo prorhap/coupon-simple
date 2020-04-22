@@ -9,6 +9,7 @@ import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 
 public class CouponTest {
 
@@ -19,11 +20,16 @@ public class CouponTest {
     public void itShouldBeInIssuedStatusAfterIssued() throws Exception {
 
         Coupon coupon = couponFactory.create("A1B1C1", couponDateUtils.yesterday(), couponDateUtils.tomorrow());
-        Date issuedAt = new Date();
-        coupon.issue(new User("bob", "01011111111"), issuedAt);
+        User bob = new User("bob", "01011111111");
+        Date issuedAt = couponDateUtils.now();
+
+        coupon.issue(bob, issuedAt);
 
         assertThat(coupon.getIssuedAt(), equalTo(issuedAt));
         assertThat(coupon.isIssued(), equalTo(true));
+
+        assertThat(coupon.getUser(), equalTo(bob));
+        assertThat(bob.getCoupons(), hasItem(coupon));
     }
 
     @Test
