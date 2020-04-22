@@ -23,7 +23,6 @@ public abstract class BaseEntity implements Serializable {
     @LastModifiedDate
     protected Date modifiedDate = new Date();
 
-
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -39,19 +38,4 @@ public abstract class BaseEntity implements Serializable {
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
-
-//    public Account getCreatedBy() {
-//        return createdBy;
-//    }
-//
-//    public Account getLastModifiedBy() {
-//        return lastModifiedBy;
-//    }
-//
-//    public BaseEntity amendModifier(Account account) {
-//        this.lastModifiedBy = account;
-//        this.modifiedDate = new Date();
-//        return this;
-//    }
-
 }
